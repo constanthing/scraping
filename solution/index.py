@@ -23,7 +23,7 @@ options.add_argument('--disable-gpu')  # Disable GPU (optional, for stability)
 browser = webdriver.Chrome(service=service, options=options)
 
 url = "https://aicalliance.org/cef-universe/fund-screener/"
-timeout = 20
+timeout = 60
 
 # seconds
 wait = WebDriverWait(browser, timeout)
@@ -36,8 +36,6 @@ parser = argparse.ArgumentParser(description="Uses selenium module to save all t
 parser.add_argument("-sd", "--separate-data", action="store_true", help="Separate data into an array of [['Page X', [ticks]], ...]")
 args = parser.parse_args()
 separate_data = args.separate_data
-
-cancelled = False 
 
 try:
     browser.get(url)
@@ -53,7 +51,7 @@ try:
     wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[num-pages] .pageLink1 a")))
     links = navigation.find_elements(By.CSS_SELECTOR, "[class*=pageLink] a")
 
-    actions.scroll_to_element(links[0]).move_to_element(links[0]).click().perform()
+    # actions.scroll_to_element(links[0]).move_to_element(links[0]).click().perform()
 
     data = []
 
@@ -62,6 +60,7 @@ try:
     # The links all refresh too. 
     # 
 
+    # pageLinks start at 1
     start = 1
     end = len(links)
 
@@ -72,11 +71,12 @@ try:
 
             print("waiting for tickers")
             wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[data-ticker]")))
-            tickers = browser.find_elements(By.CSS_SELECTOR, ".tab-col-ticker > [data-ticker]")
+            tickers = [t.text for t in browser.find_elements(By.CSS_SELECTOR, ".tab-col-ticker > [data-ticker]")]
+            print("tickers found")
             if separate_data:
-                data.append([f"Page {index}", [t.text for t in tickers]])
+                data.append([f"Page {index}", tickers])
             else:
-                data.extend([t.text for t in tickers])
+                data.extend(tickers)
             print("Tickers saved.")
 
             index+=1
@@ -98,14 +98,12 @@ try:
             wait.until(EC.text_to_be_present_in_element((By.CSS_SELECTOR, "#load"), "SEARCH"))
             print("request done")
     getTickers()
-except Exception:
-    print(Exception)
-    cancelled = True
+    # write data to file
+    file_name = f"{datetime.datetime.now()}-ticks-data-{'separated' if separate_data else 'singular'}.json"
+    with open(file_name, "w") as file:
+        file.write(json.dumps(data))
+    print("Wrote data to ----> ", file_name)
+except Exception as e:
+    print(e)
 finally: 
-    if not cancelled:
-        # write data to file
-        file_name = f"{datetime.datetime.now()}-ticks-data-{'separated' if separate_data else 'singular'}.json"
-        with open(file_name, "w") as file:
-            file.write(json.dumps(data))
-        print("Wrote data to ----> ", file_name)
     browser.quit()
