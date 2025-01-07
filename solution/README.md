@@ -8,7 +8,7 @@ Easiest way, add chromedriver to path:
 - Mac
 	- Move chromedriver to /usr/local/bin
 - Windows
-- Linux
+- Linux  
 Or, add path to chromedriver in Python code when initializing instance of WebDriver:
 ```
 chrome = webdriver.Chrome(executable_path="/path/to/driver")
@@ -32,7 +32,7 @@ while index < end:
 
 It may seem unncessary to WebDriverWait.until() in the while loop. However,  
 when clicking a navigation link to get a new page of ticks the navigation list 
-is removed and added to the DOM (same for table).
+is removed and added to the DOM (same for table).  
 ```
 You can test this by opening the console in the site:
 1. saving the table as a local variable
