@@ -1,4 +1,4 @@
-FROM selenium/standalone-chrome AS base
+FROM selenium/standalone-chrome:latest
 
 USER root
 RUN apt-get update && apt-get install -y python3 python3-pip
