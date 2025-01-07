@@ -3,13 +3,24 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
 
 import json
 import datetime
 import argparse
 
+# service manages the driver; location of chromedriver
+service = Service("/usr/local/bin/chromedriver")
+
+options = webdriver.ChromeOptions()
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')  # Run in headless mode
+options.add_argument('--no-sandbox')  # Necessary for running in Docker
+options.add_argument('--disable-dev-shm-usage')  # Prevents shared memory issues
+options.add_argument('--disable-gpu')  # Disable GPU (optional, for stability)
+
 # instance of webdriver to control Chrome
-browser = webdriver.Chrome()
+browser = webdriver.Chrome(service=service, options=options)
 
 url = "https://aicalliance.org/cef-universe/fund-screener/"
 timeout = 20
