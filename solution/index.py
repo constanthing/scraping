@@ -22,7 +22,7 @@ actions = ActionChains(browser)
 
 # Command Line 
 parser = argparse.ArgumentParser(description="Uses selenium module to save all the ticks in the records table on https://aicalliance.org/cef-universe/fund-screener/")
-parser.add_argument("-sd", "--separate-data", action="store_true", help="Separate data into dictionary of {Page X: [ticks]}")
+parser.add_argument("-sd", "--separate-data", action="store_true", help="Separate data into an array of [['Page X', [ticks]], ...]")
 args = parser.parse_args()
 separate_data = args.separate_data
 
