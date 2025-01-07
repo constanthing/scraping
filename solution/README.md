@@ -20,11 +20,11 @@ pip3 install -r requirements.txt
 ```
 
 ## Info
-The "All" option in the <select> element does not work as it results in an endless loading state.
+The "All" option in the **select** element does not work as it results in an endless loading state.  
 Therefore, instead, the code iterates through the navigation page links (.pageLinkX) and saves the 
 newly loaded ticks.
 ```
-# end usually len(links)
+# end usually = len(links)
 while index < end:
 	# save ticks 
 	# press next link to load new ticks
@@ -32,7 +32,7 @@ while index < end:
 
 It may seem unncessary to WebDriverWait.until() in the while loop. However,  
 when clicking a navigation link to get a new page of ticks the navigation list 
-is removed and added to the DOM (same for table).  
+is removed and added to the DOM (same for table).
 ```
 You can test this by opening the console in the site:
 1. saving the table as a local variable
