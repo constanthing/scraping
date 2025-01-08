@@ -24,4 +24,4 @@ RUN mv chromedriver-linux64/chromedriver /usr/local/bin/
 WORKDIR /app
 COPY . . 
 
-CMD ["python3", "index.py"]
+CMD ["python3", "index.py", "-sd"]

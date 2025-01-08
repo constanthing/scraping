@@ -18,9 +18,15 @@ options.add_argument('--headless')  # Run in headless mode
 options.add_argument('--no-sandbox')  # Necessary for running in Docker
 options.add_argument('--disable-dev-shm-usage')  # Prevents shared memory issues
 options.add_argument('--disable-gpu')  # Disable GPU (optional, for stability)
+options.add_argument('--disable-software-rasterizer')
+options.add_argument(
+    "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.5672.127 Safari/537.36"
+)
 
 # instance of webdriver to control Chrome
 browser = webdriver.Chrome(service=service, options=options)
+browser.set_page_load_timeout(30)
+
 
 url = "https://aicalliance.org/cef-universe/fund-screener/"
 timeout = 60
@@ -38,18 +44,33 @@ args = parser.parse_args()
 separate_data = args.separate_data
 
 try:
-    browser.get(url)
+    tries = 0
+    while tries < 3:
+        try:
+            print("trying to get page")
+            browser.get(url)
+            print("url loaded")
+            break
+        except Exception as e:
+            print("Refreshing page")
+            tries+=1
 
+    print("waiting cancel")
     # get rid of popup onload
     cancel = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[href='#awb-close-oc__35860']")))
     actions.scroll_to_element(cancel).move_to_element(cancel).click().perform()
+    print("cancel clicked")
 
+    print("navigation waiting")
     # wait until navigation link container is in the dom
     navigation = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[num-pages]")))
 
+    print("links waiting")
     # wait until one navigation link is in the dom (if one is in then all are in)
     wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[num-pages] .pageLink1 a")))
     links = navigation.find_elements(By.CSS_SELECTOR, "[class*=pageLink] a")
+
+    print("links loaded")
 
     # actions.scroll_to_element(links[0]).move_to_element(links[0]).click().perform()
 
@@ -61,7 +82,7 @@ try:
     # 
 
     # pageLinks start at 1
-    start = 1
+    start = 15
     end = len(links)
 
     def getTickers():

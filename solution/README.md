@@ -14,6 +14,21 @@ Or, add path to chromedriver in Python code when initializing instance of WebDri
 chrome = webdriver.Chrome(executable_path="/path/to/driver")
 ```
 
+# Creating & Running container 
+## Building on device without amd64 architecture
+Run 
+```
+docker build --platform=linux/amd64 -t [name-of-image] .
+```
+
+## Running container
+```
+docker run --shm-size=2g [name-of-image]
+```
+> --shm-size=2g  
+Reduces chances of chrome crashing.
+
+
 ## Install requirements (selenium) 
 ```
 pip3 install -r requirements.txt
