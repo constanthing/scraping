@@ -20,6 +20,17 @@ Pull image on any machine
 ```
 docker pull constanthing/tick-scraper:latest
 ```
+Run image
+```
+docker run -it constanthing/tick-scraper:latest
+```
+Updating code? Make sure to publish it:
+```
+# update local image
+docker build -t tick-scraper .
+docker tag tick-scraper constanthing/tick-scraper:latest
+docker push constanthing/tick-scraper:latest
+```
 # Requirements
 ## Chrome Driver
 - [link](https://googlechromelabs.github.io/chrome-for-testing/)
