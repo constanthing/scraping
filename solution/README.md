@@ -31,6 +31,17 @@ docker build -t tick-scraper .
 docker tag tick-scraper constanthing/tick-scraper:latest
 docker push constanthing/tick-scraper:latest
 ```
+# Copying saved data to local machine
+Get container id
+```
+docker ps -a
+``` 
+Copy file name from output after running the image  
+Copy file from container to local machine
+```
+docker cp [container-id]:/app/[file-name] .
+```
+
 # Requirements
 ## Chrome Driver
 - [link](https://googlechromelabs.github.io/chrome-for-testing/)
@@ -65,6 +76,9 @@ Reduces chances of chrome crashing.
 ```
 pip3 install -r requirements.txt
 ```
+
+## Mac
+The program does run well on mac as its configured to run on amd64 have yet to add arm64 to the manifest to support arm64 architecture.
 
 ## Info
 The "All" option in the **select** element does not work as it results in an endless loading state.  
