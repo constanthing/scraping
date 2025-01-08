@@ -24,6 +24,9 @@ Run image
 ```
 docker run -it constanthing/tick-scraper:latest
 ```
+> --shm-size=2g  
+Optional, reduces chances of chrome crashing.  
+
 Updating code? Make sure to publish it:
 ```
 # update local image
@@ -42,45 +45,34 @@ Copy file from container to local machine
 docker cp [container-id]:/app/[file-name] .
 ```
 
-# Requirements
+# Running without Dockerfile / Image 
+## Chrome 
+Install chrome
 ## Chrome Driver
 - [link](https://googlechromelabs.github.io/chrome-for-testing/)
-
 ## Make sure selenium can find driver
 Easiest way, add chromedriver to path:
-- Mac
+- Mac/Linux
 	- Move chromedriver to /usr/local/bin
 - Windows
-- Linux  
-Or, add path to chromedriver in Python code when initializing instance of WebDriver:
+**Or**, add path to chromedriver in Python code when initializing instance of WebDriver:
 ```
-chrome = webdriver.Chrome(executable_path="/path/to/driver")
+from selenium.webdriver.chrome.service import Service
+...
+service = new Service("/path/to/driver") # ex: "/usr/local/bin/chromedriver"
+browser = webdriver.Chrome(service=service)
 ```
-
-# Creating & Running container 
-## Building on device without amd64 architecture
-Run 
+## Install selenium
 ```
-docker build --platform=linux/amd64 -t [name-of-image] .
-```
-
-## Running container
-```
-docker run --shm-size=2g [name-of-image]
-```
-> --shm-size=2g  
-Reduces chances of chrome crashing.
-
-
-## Install requirements (selenium) 
-```
-pip3 install -r requirements.txt
+pip3 install selenium
+OR
+sudo apt install python3-selenium
 ```
 
-## Mac
-The program does run well on mac as its configured to run on amd64 have yet to add arm64 to the manifest to support arm64 architecture.
+# Mac
+The program does not run well on mac as its configured to run on amd64 have yet to add arm64 to the manifest to support arm64 architecture.
 
-## Info
+# Info
 The "All" option in the **select** element does not work as it results in an endless loading state.  
 Therefore, instead, the code iterates through the navigation page links (.pageLinkX) and saves the 
 newly loaded ticks.

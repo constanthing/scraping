@@ -9,24 +9,14 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException,
 import json
 import datetime
 import argparse
-import logging
 
 
 #### Program configurations 
 # Command Line 
 parser = argparse.ArgumentParser(description="Uses selenium module to save all the ticks in the records table on https://aicalliance.org/cef-universe/fund-screener/")
 parser.add_argument("-sd", "--separate-data", action="store_true", help="Separate data into an array of [['Page X', [ticks]], ...]")
-parser.add_argument("-l", "--logs", action="store_true", help="Show logs")
 args = parser.parse_args()
 separate_data = args.separate_data
-
-# intializing logger
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger(__name__)
-if not args.logs:
-    # not showing error and below logs
-    logging.disable(level=logging.ERROR)
-
 
 #### WebDriver configurations 
 # browser configurations
