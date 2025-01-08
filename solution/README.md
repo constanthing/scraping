@@ -1,4 +1,25 @@
 Scrape https://aicalliance.org/cef-universe/fund-screener/ ticks in the fund table.
+# Dockerfile
+Build the image
+```
+docker build -t tick-scraper .
+```
+Run the image to test
+```
+docker run tick-scraper
+```
+Tag image for upload to docker hub
+```
+docker tag tick-scraper constanthing/tick-scraper:latest
+```
+Push to docker hub
+```
+docker push constanthing/tick-scraper:latest
+```
+Pull image on any machine
+```
+docker pull constanthing/tick-scraper:latest
+```
 # Requirements
 ## Chrome Driver
 - [link](https://googlechromelabs.github.io/chrome-for-testing/)

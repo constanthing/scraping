@@ -42,7 +42,8 @@ service = Service("/usr/local/bin/chromedriver")
 
 # instance of webdriver to control Chrome
 browser = webdriver.Chrome(service=service, options=options)
-browser.set_page_load_timeout(30)
+# website takes a while to load
+browser.set_page_load_timeout(60)
 
 # url scraping
 url = "https://aicalliance.org/cef-universe/fund-screener/"
