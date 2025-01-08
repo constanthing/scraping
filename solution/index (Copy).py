@@ -56,16 +56,16 @@ def setup_before_scraping():
     tries = 0
     while tries < 3:
         try:
-            print("Requesting page")
+            logger.info("Requesting page")
             browser.get(url)
-            print("Page loaded")
+            logger.info("Page loaded")
             break
         except TimeoutException as e:
-            print("Page load timeout reached. Refreshing page.")
+            logger.error("Page load timeout reached. Refreshing page.")
             tries+=1
     if tries == 3:
         raise Exception("Web page did not load.")
-    print("Waiting on cancel button presence in dom")
+    logger.info("Waiting on cancel button presence in dom")
 
     handle_popup()
     wait_for_navigation_link()
@@ -75,17 +75,17 @@ def handle_popup():
     # get rid of popup onload
     cancel = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[href='#awb-close-oc__35860']")))
     actions.scroll_to_element(cancel).move_to_element(cancel).click().perform()
-    print("Waiting on navigation link presence in dom")
+    logger.info("Waiting on navigation link presence in dom")
 
 
 def wait_for_navigation_link():
     # wait until one navigation link is in the dom (if one is in then all are in)
     wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[num-pages] .pageLink1 a")))
-    print("setup_for_tickers() complete")
+    logger.info("setup_for_tickers() complete")
 
 
 def get_tickers():
-    print("get_tickers() called")
+    logger.info("get_tickers() called")
     data = []
     # pageLinks start at 1 (.pageLink1, .pageLink2, etc.)
     # if start value is changed make sure to click on appropriate navigation link
@@ -94,15 +94,15 @@ def get_tickers():
 
     index = START 
     while (True):
-        print(f"Page: {index}")
-        print("Waiting on tickers presence in dom")
+        logger.info(f"Page: {index}")
+        logger.info("Waiting on tickers presence in dom")
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[data-ticker]")))
         tickers = [t.text for t in browser.find_elements(By.CSS_SELECTOR, ".tab-col-ticker > [data-ticker]")]
         if separate_data:
             data.append([f"Page {index}", tickers])
         else:
             data.extend(tickers)
-        print("Tickers saved")
+        logger.info("Tickers saved")
 
         index+=1
 
@@ -112,14 +112,14 @@ def get_tickers():
             browser.execute_script("arguments[0].click()", link)
         except NoSuchElementException:
             # no more pages to scrape data from
-            print(f"Element .pageLink{index} not found")
+            logger.warning(f"Element .pageLink{index} not found")
             break 
 
         # Clicking a link causes the #load button to change its text to "loading"
         # After fetch request is complete it returns to "SEARCH"
         # Using that to detect once new data is available. 
 
-        print("Waiting on search request to fulfill")
+        logger.info("Waiting on search request to fulfill")
         wait.until(EC.text_to_be_present_in_element((By.CSS_SELECTOR, "#load"), "SEARCH"))
     return data
 
@@ -132,7 +132,7 @@ def save_data(data):
             file.write(json.dumps(data))
         print(f"Data saved in ---> {file_name}")
     except Exception as e:
-        print(f"Failed to save data: {e}")
+        logger.critical(f"Failed to save data: {e}")
 
 
 def main():
@@ -141,7 +141,7 @@ def main():
         data = get_tickers()
         save_data(data)
     except Exception as e:
-        print(f"Program crashed: {e}") 
+        logger.critical(f"Program crashed: {e}") 
 
 
 if __name__ == "__main__":

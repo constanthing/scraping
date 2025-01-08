@@ -6,7 +6,6 @@ RUN apt-get -y update && apt upgrade
 
 # install python & dependencies
 RUN apt install -y python3
-RUN apt install -y python3.12-venv
 RUN apt install -y python3-selenium
 
 # install google-chrome
@@ -22,6 +21,6 @@ RUN unzip chromedriver-linux64.zip
 RUN mv chromedriver-linux64/chromedriver /usr/local/bin/
 
 WORKDIR /app
-COPY . . 
+COPY index.py .
 
-CMD ["python3", "index.py", "-sd"]
+CMD ["python3", "index.py"]
