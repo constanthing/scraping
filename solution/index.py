@@ -58,6 +58,7 @@ def setup_before_scraping():
         raise Exception("Web page did not load.")
     handle_popup()
     wait_for_navigation_link()
+    print("setup_for_tickers() complete")
 
 
 def handle_popup():
@@ -65,13 +66,12 @@ def handle_popup():
     # get rid of popup onload
     cancel = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[href='#awb-close-oc__35860']")))
     actions.scroll_to_element(cancel).move_to_element(cancel).click().perform()
-    print("Waiting on navigation link presence in dom")
 
 
 def wait_for_navigation_link():
+    print("Waiting on navigation link presence in dom")
     # wait until one navigation link is in the dom (if one is in then all are in)
     wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[num-pages] .pageLink1 a")))
-    print("setup_for_tickers() complete")
 
 
 def get_tickers():
