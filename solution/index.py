@@ -56,13 +56,12 @@ def setup_before_scraping():
             tries+=1
     if tries == 3:
         raise Exception("Web page did not load.")
-    print("Waiting on cancel button presence in dom")
-
     handle_popup()
     wait_for_navigation_link()
 
 
 def handle_popup():
+    print("Waiting on cancel button presence in dom")
     # get rid of popup onload
     cancel = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[href='#awb-close-oc__35860']")))
     actions.scroll_to_element(cancel).move_to_element(cancel).click().perform()
