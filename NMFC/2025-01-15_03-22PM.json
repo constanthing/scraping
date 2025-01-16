@@ -1,0 +1,66 @@
+[
+    {
+        "label": "Previous Close",
+        "value": "11.03"
+    },
+    {
+        "label": "Open",
+        "value": "11.12"
+    },
+    {
+        "label": "Bid",
+        "value": "11.04 x 100"
+    },
+    {
+        "label": "Ask",
+        "value": "11.10 x 200"
+    },
+    {
+        "label": "Day's Range",
+        "value": "11.06 - 11.17"
+    },
+    {
+        "label": "52 Week Range",
+        "value": "10.62 - 13.10"
+    },
+    {
+        "label": "Volume",
+        "value": "162,321"
+    },
+    {
+        "label": "Avg. Volume",
+        "value": "579,670"
+    },
+    {
+        "label": "Market Cap (intraday)",
+        "value": "1.196B"
+    },
+    {
+        "label": "Beta (5Y Monthly)",
+        "value": "1.19"
+    },
+    {
+        "label": "PE Ratio (TTM)",
+        "value": "10.66"
+    },
+    {
+        "label": "EPS (TTM)",
+        "value": "1.04"
+    },
+    {
+        "label": "Earnings Date",
+        "value": "Feb 24, 2025 - Feb 28, 2025"
+    },
+    {
+        "label": "Forward Dividend & Yield",
+        "value": "1.32 (11.97%)"
+    },
+    {
+        "label": "Ex-Dividend Date",
+        "value": "Dec 17, 2024"
+    },
+    {
+        "label": "1y Target Est",
+        "value": "12.58"
+    }
+]
