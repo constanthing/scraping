@@ -4,10 +4,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By 
 from selenium.webdriver.support.wait import WebDriverWait 
 from selenium.webdriver.support import expected_conditions as EC 
-from selenium.common.exceptions import NoSuchElementException
-
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 import json
+from re import sub, split
 from datetime import datetime
 
 # path to binary
@@ -16,12 +16,10 @@ service = Service("/usr/local/bin/chromedriver")
 options = webdriver.ChromeOptions()
 options.add_argument('--headless')
 options.add_argument('--no-sandbox')
-options.add_argument('--disable-dev-shm-usage')  # prevents shared memory issues
+options.add_argument('--disable-dev-shm-usage')
 options.add_argument('--disable-gpu')
 options.add_argument('--disable-software-rasterizer')
 options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.5672.127 Safari/537.36")
-# normal waits entire page to load
-# eager waits for dom to load (resources like images/stylesheets are ignored)
 options.page_load_strategy = "eager" 
 options.timeouts = { "pageLoad": 60000 }
 browser = webdriver.Chrome(service=service, options=options)
@@ -32,34 +30,47 @@ wait = WebDriverWait(browser, timeout)
 actions = ActionChains(browser)
 
 def load_page():
-    print("waiting on page request")
     URL = "https://finance.yahoo.com/quote/NMFC/"
-    browser.get(URL)
-    print("page loaded")
+    for i in range(3):
+        try:
+            print("waiting on page request")
+            browser.get(URL)
+            print("page loaded")
+            return
+        except TimeoutException:
+            # after 60 seconds if page does not load TimeoutException is thrown
+            print("Page load timeout reached... reloading page")
+    raise TimeoutException("Failed to load page...")
+
+# cleans label e.g. "Market Cap (intraday)" -> market_cap 
+def clean_label(label):
+    clean_label = split(r"\(", label.lower(), maxsplit=1)[0]
+    clean_label = sub(r"[ -]", "_", clean_label)
+    return sub(r"[.']", "", clean_label).strip("_")
 
 def get_data():
     quoteStatistics = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='quote-statistics']")))
     # quoteStatistics is a div containing the data 
-    # data is stored a unordered list 
-    # in the list items there are 2 type of spans -> span:label & span:value
+    # data is stored in a unordered list 
+    # list items have 2 type of spans in them -> span:label & span:value
     # 2 types of list-items depending on their span:value -> li:number_only & li:mixed
     # li:number_only has a <fin-streamer/> element in the span:value
     # li:mixed has no child elements in span:value ONLY text
     lis = quoteStatistics.find_elements(By.CSS_SELECTOR, "li")
-    data = []
+    data = {}
     for li in lis:
         label = li.find_element(By.CSS_SELECTOR, ".label").text
-        value = li.find_element(By.CSS_SELECTOR, ".value")
-        # determine whether value is :number or :mixed
-        tvalue = None
+        valueElement = li.find_element(By.CSS_SELECTOR, ".value")
+        value = None
         try:
-            tvalue = value.find_element(By.CSS_SELECTOR, "fin-streamer").text
+            # li is :number_only
+            value = valueElement.find_element(By.CSS_SELECTOR, "fin-streamer").text
         except NoSuchElementException:
-            print("li not :number_only... storing :mixed value")
-            tvalue = value.text
-        print(f"{label} - {tvalue}")
-
-        data.append({"label": label, "value": tvalue})
+            # li is :mixed
+            value = valueElement.text
+        print(f"{label} - {value}")
+        data[clean_label(label)] = value  
+        # data.append({"label": label, "value": value})
     return data
 
 def store_data(data):
